@@ -1,0 +1,96 @@
+
+import org.apache.tools.ant.filters.ReplaceTokens
+import com.bmuschko.gradle.docker.tasks.container.*
+
+plugins {
+    id 'com.bmuschko.docker-remote-api' version '4.8.0'
+}
+
+apply plugin: TeamCityNodesPlugin
+
+ext {
+    dockerServerUrl = findProperty('docker.server.url')
+    dockerCertPath = findProperty('docker.cert.path')
+    javaHome = findProperty('java8.home')
+    homeDir = findProperty('teamcity.home')
+    dataDir = findProperty('data.dir') ?: "${rootDir}/data/2018.2"
+    nodesDir = findProperty('nodes.dir') ?: "${rootDir}/nodes"
+    jdbcUrl = findProperty('jdbc.url') ?: 'jdbc:mysql://localhost:3306/teamcity'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    database
+}
+
+dependencies {
+    database 'mysql:mysql-connector-java:8.0.16'
+}
+
+docker {
+    if (dockerServerUrl) {
+        url = dockerServerUrl
+    }
+    if (dockerCertPath) {
+        certPath = file(dockerCertPath)
+    }
+}
+
+task createDatabase(type: DockerCreateContainer) {
+    targetImageId 'mysql/mysql-server:5.7'
+    containerName = 'teamcity-2018-db'
+    portBindings = ['3306:3306']
+    envVars = [MYSQL_DATABASE: 'teamcity', MYSQL_USER: 'teamcity', MYSQL_PASSWORD: 'teamcity']
+}
+
+task startDatabase(type: DockerStartContainer) {
+    targetContainerId 'teamcity-2018-db'
+}
+
+task stopDatabase(type: DockerStopContainer) {
+    targetContainerId 'teamcity-2018-db'
+}
+
+task installDatabaseDriver(type: Copy) {
+    into "${dataDir}/lib/jdbc"
+    from configurations.database
+}
+
+task configureDatabase(type: Copy) {
+    dependsOn installDatabaseDriver
+    into "${dataDir}/config"
+    from 'database.properties'
+    filter(ReplaceTokens, tokens: [JDBC_URL: project.ext.jdbcUrl])
+}
+
+teamcityNodes {
+    javaHome = file(project.ext.javaHome)
+    homeDir = file(project.ext.homeDir)
+    dataDir = file(project.ext.dataDir)
+    nodesDir = file(project.ext.nodesDir)
+
+    nodes {
+        node1 {
+            // url http://localhost:8211
+            portOffset = 100
+        }
+        node2 {
+            // url http://localhost:8311
+            portOffset = 200
+            serverOptions = '-Dteamcity.server.nodeId=node2'
+        }
+        node3 {
+            // url http://localhost:8411
+            portOffset = 300
+            serverOptions = '-Dteamcity.server.role=running-builds-node -Dteamcity.server.rootURL=http://localhost:8411/'
+        }
+        node4 {
+            // url http://localhost:8511
+            portOffset = 400
+            serverOptions = '-Dteamcity.server.nodeId=node4'
+        }
+    }
+}

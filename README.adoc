@@ -1,0 +1,54 @@
+= Example TeamCity Secondary Nodes
+:uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
+:uri-teamcity-docs: https://confluence.jetbrains.com/display/TCD18
+:uri-secondary-node: {uri-teamcity-docs}/Configuring+Secondary+Node[Secondary Node]
+:uri-running-builds-node: {uri-teamcity-docs}/Configuring+Running+Builds+Node[Running Builds Node]
+
+This project is used to setup multiple TeamCity nodes to try out the {uri-secondary-node} and {uri-running-builds-node}
+functionality. The project is not an example of how to setup multiple TeamCity nodes. The project uses a Gradle plugin
+to create, delete, start and stop the TeamCity nodes.
+
+The following steps sets up a MySQL database and creates and starts the TeamCity nodes.
+
+Create a MySQL database container.
+
+    ./gradlew createDatabase
+
+This requires Docker and may require additional configuration, the following properties can be set in the
+`gradle.properties` file
+
+    docker.server.url=https://192.168.99.100:2736
+    docker.cert.path=<home dir>/.docker/machine/machines/default
+
+Start the database.
+
+    ./gradlew startDatabase
+
+Configure TeamCity to use the database
+
+    ./gradlew configureDatabase
+
+Start the first node
+
+    ./gradlew startNode1
+
+This node is the main server and when first run will initialise the database and setup the administrator user. This
+should be completed before starting the other nodes. The configuration for the node uses a port offset of 100,
+this means the server will be accessed at the following URL, http://localhost:8211/.
+
+Start the other nodes
+
+    ./gradlew startNode2
+    ./gradlew startNode3
+    ./gradlew startNode4
+
+The nodes should appear in the Nodes Configuration page in the Administration section, accessed at the following URL
+http://localhost:8211/admin/admin.html?item=nodesConfiguration.
+
+To stop the nodes run
+
+    ./gradlew stopNode1
+
+To stop the database
+
+    ./gradlew stopDatabase

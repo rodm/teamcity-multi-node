@@ -11,9 +11,10 @@ apply plugin: TeamCityNodesPlugin
 ext {
     dockerServerUrl = findProperty('docker.server.url')
     dockerCertPath = findProperty('docker.cert.path')
+    containerName = findProperty('container.name') ?: 'teamcity-2019-db'
     javaHome = findProperty('java8.home')
     homeDir = findProperty('teamcity.home')
-    dataDir = findProperty('data.dir') ?: "${rootDir}/data/2018.2"
+    dataDir = findProperty('data.dir') ?: "${rootDir}/data/2019.1"
     nodesDir = findProperty('nodes.dir') ?: "${rootDir}/nodes"
     jdbcUrl = findProperty('jdbc.url') ?: 'jdbc:mysql://localhost:3306/teamcity'
 }
@@ -41,17 +42,17 @@ docker {
 
 task createDatabase(type: DockerCreateContainer) {
     targetImageId 'mysql/mysql-server:5.7'
-    containerName = 'teamcity-2018-db'
+    containerName = project.ext.containerName
     portBindings = ['3306:3306']
     envVars = [MYSQL_DATABASE: 'teamcity', MYSQL_USER: 'teamcity', MYSQL_PASSWORD: 'teamcity']
 }
 
 task startDatabase(type: DockerStartContainer) {
-    targetContainerId 'teamcity-2018-db'
+    targetContainerId project.ext.containerName
 }
 
 task stopDatabase(type: DockerStopContainer) {
-    targetContainerId 'teamcity-2018-db'
+    targetContainerId project.ext.containerName
 }
 
 task installDatabaseDriver(type: Copy) {
@@ -80,7 +81,7 @@ teamcityNodes {
         node2 {
             // url http://localhost:8311
             portOffset = 200
-            serverOptions = '-Dteamcity.server.nodeId=node2'
+            serverOptions = '-Dteamcity.server.nodeId=node2 -Dteamcity.server.rootURL=http://localhost:8311/'
         }
         node3 {
             // url http://localhost:8411
@@ -90,7 +91,7 @@ teamcityNodes {
         node4 {
             // url http://localhost:8511
             portOffset = 400
-            serverOptions = '-Dteamcity.server.nodeId=node4'
+            serverOptions = '-Dteamcity.server.nodeId=node4 -Dteamcity.server.rootURL=http://localhost:8511/'
         }
     }
 }

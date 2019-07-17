@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import com.bmuschko.gradle.docker.tasks.container.*
 
 plugins {
-    id 'com.bmuschko.docker-remote-api' version '4.8.0'
+    id 'com.bmuschko.docker-remote-api' version '4.10.0'
 }
 
 apply plugin: TeamCityNodesPlugin

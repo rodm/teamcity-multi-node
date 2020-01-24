@@ -1,11 +1,12 @@
 = Example TeamCity Secondary Nodes
 :uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
 :uri-teamcity-docs: https://confluence.jetbrains.com/display/TCD18
-:uri-secondary-node: {uri-teamcity-docs}/Configuring+Secondary+Node[Secondary Node]
-:uri-running-builds-node: {uri-teamcity-docs}/Configuring+Running+Builds+Node[Running Builds Node]
+:uri-teamcity-docs: https://www.jetbrains.com/help/teamcity/2019.2/
+:uri-multiple-nodes: {uri-teamcity-docs}/multinode-setup.html[Multiple Nodes]
+:uri-secondary-node: {uri-teamcity-docs}/configuring-secondary-node.html[Secondary Node]
 
-This project is used to setup multiple TeamCity nodes to try out the {uri-secondary-node} and {uri-running-builds-node}
-functionality. The project is not an example of how to setup multiple TeamCity nodes. The project uses a Gradle plugin
+This project is used to setup TeamCity with {uri-multiple-nodes} to try out the {uri-secondary-node} functionality.
+The project is not an example of how to setup multiple TeamCity nodes. The project uses a Gradle plugin
 to create, delete, start and stop the TeamCity nodes.
 
 The following steps sets up a MySQL database and creates and starts the TeamCity nodes.

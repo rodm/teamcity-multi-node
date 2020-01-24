@@ -30,7 +30,6 @@ public class DeleteNode extends DefaultTask {
     }
 
     @Destroys
-    @InputDirectory
     DirectoryProperty getNodeDir() {
         return nodeDir;
     }

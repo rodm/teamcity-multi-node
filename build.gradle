@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import com.bmuschko.gradle.docker.tasks.container.*
 
 plugins {
-    id 'com.bmuschko.docker-remote-api' version '4.10.0'
+    id 'com.bmuschko.docker-remote-api' version '6.1.2'
 }
 
 apply plugin: TeamCityNodesPlugin
@@ -43,7 +43,7 @@ docker {
 task createDatabase(type: DockerCreateContainer) {
     targetImageId 'mysql/mysql-server:5.7'
     containerName = project.ext.containerName
-    portBindings = ['3306:3306']
+    hostConfig.portBindings = ['3306:3306']
     envVars = [MYSQL_DATABASE: 'teamcity', MYSQL_USER: 'teamcity', MYSQL_PASSWORD: 'teamcity']
 }
 

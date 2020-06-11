@@ -1,7 +1,6 @@
 = Example TeamCity Secondary Nodes
 :uri-teamcity: https://www.jetbrains.com/teamcity/[TeamCity]
-:uri-teamcity-docs: https://confluence.jetbrains.com/display/TCD18
-:uri-teamcity-docs: https://www.jetbrains.com/help/teamcity/2019.2/
+:uri-teamcity-docs: https://www.jetbrains.com/help/teamcity/2020.1
 :uri-multiple-nodes: {uri-teamcity-docs}/multinode-setup.html[Multiple Nodes]
 :uri-secondary-node: {uri-teamcity-docs}/configuring-secondary-node.html[Secondary Node]
 

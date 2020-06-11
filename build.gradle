@@ -11,10 +11,10 @@ apply plugin: TeamCityNodesPlugin
 ext {
     dockerServerUrl = findProperty('docker.server.url')
     dockerCertPath = findProperty('docker.cert.path')
-    containerName = findProperty('container.name') ?: 'teamcity-2019.2-db'
+    containerName = findProperty('container.name') ?: 'teamcity-2020.1-db'
     javaHome = findProperty('java8.home')
     homeDir = findProperty('teamcity.home')
-    dataDir = findProperty('data.dir') ?: "${rootDir}/data/2019.2"
+    dataDir = findProperty('data.dir') ?: "${rootDir}/data/2020.1"
     nodesDir = findProperty('nodes.dir') ?: "${rootDir}/nodes"
     jdbcUrl = findProperty('jdbc.url') ?: 'jdbc:mysql://localhost:3306/teamcity'
 }

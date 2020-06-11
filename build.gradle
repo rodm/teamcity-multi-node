@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import com.bmuschko.gradle.docker.tasks.container.*
 
 plugins {
-    id 'com.bmuschko.docker-remote-api' version '6.1.2'
+    id 'com.bmuschko.docker-remote-api' version '6.4.0'
 }
 
 apply plugin: TeamCityNodesPlugin
@@ -28,7 +28,7 @@ configurations {
 }
 
 dependencies {
-    database 'mysql:mysql-connector-java:8.0.16'
+    database 'mysql:mysql-connector-java:8.0.20'
 }
 
 docker {

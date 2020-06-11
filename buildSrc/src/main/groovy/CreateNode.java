@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
-import org.gradle.api.Transformer;
-import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -82,36 +79,27 @@ public class CreateNode extends DefaultTask {
         }
 
         File confDir = new File(dir, "conf");
-        project.copy(new Action<CopySpec>() {
-            @Override
-            public void execute(CopySpec copySpec) {
-                copySpec.from(new File(homeDir.get().getAsFile(), "conf"));
-                copySpec.exclude("**/server.xml");
-                copySpec.into(confDir);
-            }
+        project.copy(copySpec -> {
+            copySpec.from(new File(homeDir.get().getAsFile(), "conf"));
+            copySpec.exclude("**/server.xml");
+            copySpec.into(confDir);
         });
-        project.copy(new Action<CopySpec>() {
-            @Override
-            public void execute(CopySpec copySpec) {
-                copySpec.from(new File(homeDir.get().getAsFile(), "conf"));
-                copySpec.include("**/server.xml");
-                copySpec.into(confDir);
-                copySpec.filter(new Transformer<String, String>() {
-                    @Override
-                    public String transform(String line) {
-                        if (line.contains("port=\"8111\"")) {
-                            return line.replace("8111", Integer.toString(8111 + portOffset.get()));
-                        }
-                        if (line.contains("port=\"8105\"")) {
-                            return line.replace("8105", Integer.toString(8105 + portOffset.get()));
-                        }
-                        if (line.contains("redirectPort=\"8543\"")) {
-                            return line.replace("8543", Integer.toString(8543 + portOffset.get()));
-                        }
-                        return line;
-                    }
-                });
-            }
+        project.copy(copySpec -> {
+            copySpec.from(new File(homeDir.get().getAsFile(), "conf"));
+            copySpec.include("**/server.xml");
+            copySpec.into(confDir);
+            copySpec.filter(line -> {
+                if (line.contains("port=\"8111\"")) {
+                    return line.replace("8111", Integer.toString(8111 + portOffset.get()));
+                }
+                if (line.contains("port=\"8105\"")) {
+                    return line.replace("8105", Integer.toString(8105 + portOffset.get()));
+                }
+                if (line.contains("redirectPort=\"8543\"")) {
+                    return line.replace("8543", Integer.toString(8543 + portOffset.get()));
+                }
+                return line;
+            });
         });
     }
 }
